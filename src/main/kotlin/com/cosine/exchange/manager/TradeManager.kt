@@ -1,16 +1,14 @@
 package com.cosine.exchange.manager
 
-import com.cosine.exchange.main.Exchange
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import java.util.*
-
 
 /**
  * self = 본인
  * target = 상대
  */
-class TradeManager(self: Player, target: Player) {
+class TradeManager(self: Player, target: Player) : InstanceManager() {
 
     companion object {
         /**
@@ -22,7 +20,7 @@ class TradeManager(self: Player, target: Player) {
          * 해당 플레이어가 거래 중인지 확인합니다.
          * (activeTrades에서 traders를 가져와 체크합니다.)
          */
-        fun getTradeState(player: Player): TradeManager? {
+        fun getTrade(player: Player): TradeManager? {
             for (trade in activeTrades) {
                 if (trade.traders[0] == player.uniqueId || trade.traders[1] == player.uniqueId) {
                     return trade
@@ -60,16 +58,14 @@ class TradeManager(self: Player, target: Player) {
     private var status: Boolean = false
 
     /**
-     * 메인 클래스의 이코노미 사본 객체입니다.
+     * 생성자 호출로 거래를 시작합니다.
      */
-    private val economy = Exchange.economy
-
     init {
         traders[0] = self.uniqueId
         traders[1] = target.uniqueId
 
-        tradingInventories[0] = Exchange.inventoryManager.createInventory(self, target)
-        tradingInventories[1] = Exchange.inventoryManager.createInventory(target, self)
+        tradingInventories[0] = inventoryManager.createInventory(self, target)
+        tradingInventories[1] = inventoryManager.createInventory(target, self)
 
         activeTrades.add(this)
 
@@ -78,5 +74,9 @@ class TradeManager(self: Player, target: Player) {
 
         self.openInventory(tradingInventories[0])
         target.openInventory(tradingInventories[1])
+    }
+
+    fun getClickAllowedSlot() {
+
     }
 }

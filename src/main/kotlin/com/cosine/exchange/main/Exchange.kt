@@ -1,11 +1,11 @@
 package com.cosine.exchange.main
 
 import com.cosine.exchange.command.UserCommand
+import com.cosine.exchange.listener.InventoryClickListener
 import com.cosine.exchange.manager.InstanceManager
 import com.cosine.exchange.manager.InventoryManager
 import com.cosine.exchange.manager.VariableManager
 import net.milkbowl.vault.economy.Economy
-import org.bukkit.plugin.java.JavaPlugin
 
 class Exchange : InstanceManager() {
 
@@ -23,9 +23,10 @@ class Exchange : InstanceManager() {
         }
 
         inventoryManager = InventoryManager()
-        variable = VariableManager()
+        variableManager = VariableManager()
 
         getCommand("거래").executor = UserCommand()
+        server.pluginManager.registerEvents(InventoryClickListener(), this)
     }
 
     override fun onDisable() {

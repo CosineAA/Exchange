@@ -3,8 +3,6 @@ package com.cosine.exchange.command
 import com.cosine.exchange.manager.TradeManager
 import com.cosine.exchange.service.ExchangeService
 import com.cosine.exchange.manager.InstanceManager
-import com.cosine.exchange.manager.VariableManager
-import com.cosine.exchange.util.Variable
 import com.cosine.exchange.util.sendMessages
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
@@ -12,11 +10,10 @@ import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.scheduler.BukkitRunnable
-import java.util.*
 
 class UserCommand : CommandExecutor, ExchangeService, InstanceManager() {
 
-    private val plugin = super.instance
+    private val plugin = instance
 
     private val prefix = "§f§l[ §6§l거래 §f§l]§f"
 
@@ -38,11 +35,11 @@ class UserCommand : CommandExecutor, ExchangeService, InstanceManager() {
                         player.sendMessage("$prefix 해당 플레이어가 오프라인입니다.")
                         return false
                     }
-                    if (variable.hasTrader(player.uniqueId)) {
+                    if (variableManager.hasTrader(player.uniqueId) || TradeManager.getTrade(player) != null) {
                         player.sendMessage("$prefix 이미 거래 중인 상태입니다.")
                         return false
                     }
-                    if (variable.hasTrader(target.uniqueId)) {
+                    if (variableManager.hasTrader(target.uniqueId) || TradeManager.getTrade(target) != null) {
                         player.sendMessage("$prefix 해당 플레이어는 이미 거래를 진행 중입니다.")
                         return false
                     }
@@ -64,12 +61,36 @@ class UserCommand : CommandExecutor, ExchangeService, InstanceManager() {
     }
 
     override fun beginExchange(self: Player, target: Player) {
-        object : BukkitRunnable() {
-            override fun run() {
+        variableManager.addTrader(self.uniqueId, target.uniqueId)
+        variableManager.addTrader(target.uniqueId, self.uniqueId)
 
+        object : BukkitRunnable() {
+            var time = 30
+            override fun run() {
+                time--
+                if (time == 0) {
+                    cancel()
+                    refuseExchange(self, target)
+                    return
+                }
+                if (variableManager.isAccepted(target.uniqueId)) {
+                    cancel()
+                    TradeManager(self, target)
+                } else {
+                    cancel()
+                    refuseExchange(self, target)
+                }
             }
-        }.runTaskTimerAsynchronously(plugin, 0, 20)
-        TradeManager(self, target)
+        }.runTaskTimerAsynchronously(this, 0, 20)
+    }
+
+    private fun refuseExchange(self: Player, target: Player) {
+        variableManager.apply {
+            deleteExchange(self.uniqueId)
+            deleteExchange(target.uniqueId)
+        }
+        self.sendMessage("$prefix 상대방이 거래를 거절하였습니다.")
+        target.sendMessage("$prefix 거래를 거절하였습니다.")
     }
 
     override fun acceptExchange() {

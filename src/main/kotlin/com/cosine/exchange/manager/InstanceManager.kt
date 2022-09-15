@@ -18,6 +18,6 @@ abstract class InstanceManager : JavaPlugin() {
     /**
      * 아래는 모두 클래스 객체입니다.
      */
-    lateinit var variable: VariableManager
+    lateinit var variableManager: VariableManager
     lateinit var inventoryManager: InventoryManager
 }
