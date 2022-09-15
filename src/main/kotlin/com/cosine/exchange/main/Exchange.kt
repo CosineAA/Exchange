@@ -9,10 +9,6 @@ import net.milkbowl.vault.economy.Economy
 
 class Exchange : InstanceManager() {
 
-    override fun onLoad() {
-        super.instance = this
-    }
-
     override fun onEnable() {
         logger.info("거래 플러그인 활성화")
 
@@ -25,7 +21,7 @@ class Exchange : InstanceManager() {
         inventoryManager = InventoryManager()
         variableManager = VariableManager()
 
-        getCommand("거래").executor = UserCommand()
+        getCommand("거래").executor = UserCommand(this)
         server.pluginManager.registerEvents(InventoryClickListener(), this)
     }
 
