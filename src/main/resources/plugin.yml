@@ -1,0 +1,8 @@
+name: Exchange
+version: '${version}'
+main: com.cosine.exchange.main.Exchange
+authors: [ Cosine_A ]
+description: 거래 플러그인
+
+commands:
+  거래:
