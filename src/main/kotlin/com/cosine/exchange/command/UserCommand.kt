@@ -2,18 +2,17 @@ package com.cosine.exchange.command
 
 import com.cosine.exchange.manager.TradeManager
 import com.cosine.exchange.service.ExchangeService
-import com.cosine.exchange.manager.InstanceManager
-import com.cosine.exchange.manager.InstanceManager.Companion.prefix
+import com.cosine.exchange.service.InstanceService
+import com.cosine.exchange.service.InstanceService.Companion.prefix
 import com.cosine.exchange.util.sendMessages
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import org.bukkit.plugin.Plugin
 import org.bukkit.scheduler.BukkitRunnable
 
-class UserCommand(private val plugin: InstanceManager) : CommandExecutor, ExchangeService {
+class UserCommand(private val plugin: InstanceService) : CommandExecutor, ExchangeService {
 
     private val variable = plugin.variableManager
 

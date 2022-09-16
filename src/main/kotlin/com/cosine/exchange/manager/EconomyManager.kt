@@ -1,24 +1,24 @@
 package com.cosine.exchange.manager
 
-import com.cosine.exchange.manager.InstanceManager.Companion.economy
 import com.cosine.exchange.service.EconomyService
+import com.cosine.exchange.service.InstanceService
 import org.bukkit.Bukkit
 import java.util.*
 
-object EconomyManager : EconomyService {
+class EconomyManager(private val plugin: InstanceService) : EconomyService {
 
     override fun getPlayerMoney(uuid: UUID): Double {
         val offlinePlayer = Bukkit.getOfflinePlayer(uuid)
-        return economy.getBalance(offlinePlayer)
+        return plugin.economy.getBalance(offlinePlayer)
     }
     // 입금
     override fun depositPlayerMoney(uuid: UUID, money: Double) {
         val offlinePlayer = Bukkit.getOfflinePlayer(uuid)
-        economy.depositPlayer(offlinePlayer, money)
+        plugin.economy.depositPlayer(offlinePlayer, money)
     }
     // 출금
     override fun withdrawPlayerMoney(uuid: UUID, money: Double) {
         val offlinePlayer = Bukkit.getOfflinePlayer(uuid)
-        economy.withdrawPlayer(offlinePlayer, money)
+        plugin.economy.withdrawPlayer(offlinePlayer, money)
     }
 }

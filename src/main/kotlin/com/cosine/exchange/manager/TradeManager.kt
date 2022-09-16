@@ -1,5 +1,6 @@
 package com.cosine.exchange.manager
 
+import com.cosine.exchange.service.InstanceService
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
@@ -10,7 +11,7 @@ import java.util.*
  * self = 본인
  * target = 상대
  */
-class TradeManager(private val plugin: InstanceManager, self: Player, target: Player) {
+class TradeManager(private val plugin: InstanceService, self: Player, target: Player) {
 
     companion object {
         /**

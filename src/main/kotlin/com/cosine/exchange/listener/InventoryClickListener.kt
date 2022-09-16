@@ -1,8 +1,9 @@
 package com.cosine.exchange.listener
 
+import com.cosine.exchange.main.Exchange.Companion.prefix
 import com.cosine.exchange.manager.EconomyManager
-import com.cosine.exchange.manager.InstanceManager.Companion.prefix
 import com.cosine.exchange.manager.TradeManager
+import com.cosine.exchange.service.InstanceService
 import com.cosine.exchange.util.getPlayer
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -11,7 +12,7 @@ import org.bukkit.event.inventory.ClickType
 import org.bukkit.event.inventory.InventoryClickEvent
 import java.util.UUID
 
-class InventoryClickListener : Listener {
+class InventoryClickListener(private val plugin: InstanceService) : Listener {
 
     @EventHandler
     fun onInventoryClick(event: InventoryClickEvent) {
@@ -35,7 +36,7 @@ class InventoryClickListener : Listener {
     }
     private fun setSendingMoney(uuid: UUID, money: Int, trade: TradeManager, event: InventoryClickEvent) {
         if (event.click == ClickType.LEFT) {
-            if (EconomyManager.getPlayerMoney(uuid) < money) {
+            if (plugin.economyManager.getPlayerMoney(uuid) < money) {
                 getPlayer(uuid).sendMessage("$prefix 돈이 부족합니다.")
                 return
             }
