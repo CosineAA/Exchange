@@ -3,6 +3,7 @@ package com.cosine.exchange.command
 import com.cosine.exchange.manager.TradeManager
 import com.cosine.exchange.service.ExchangeService
 import com.cosine.exchange.manager.InstanceManager
+import com.cosine.exchange.manager.InstanceManager.Companion.prefix
 import com.cosine.exchange.util.sendMessages
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
@@ -14,8 +15,6 @@ import org.bukkit.scheduler.BukkitRunnable
 
 class UserCommand(private val plugin: InstanceManager) : CommandExecutor, ExchangeService {
 
-    private val prefix = "§f§l[ §6§l거래 §f§l]§f"
-
     private val variable = plugin.variableManager
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
@@ -23,7 +22,6 @@ class UserCommand(private val plugin: InstanceManager) : CommandExecutor, Exchan
             val player: Player = sender
             if (args.isEmpty()) {
                 help(player)
-                plugin.inventoryManager
                 return false
             }
             when (args[0]) {
@@ -77,7 +75,7 @@ class UserCommand(private val plugin: InstanceManager) : CommandExecutor, Exchan
                 }
                 if (variable.isAccepted(target.uniqueId)) {
                     cancel()
-                    TradeManager(self, target)
+                    TradeManager(plugin, self, target)
                 } else {
                     cancel()
                     refuseExchange(self, target)

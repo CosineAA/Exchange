@@ -1,5 +1,6 @@
 package com.cosine.exchange.manager
 
+import com.cosine.exchange.util.getPlayer
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.SkullType
@@ -7,6 +8,8 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.SkullMeta
+import java.text.DecimalFormat
+import java.util.UUID
 
 
 class InventoryManager {
@@ -23,14 +26,40 @@ class InventoryManager {
         setItem("§f[ §6거래 준비 §f]", listOf("§f상대방의 거래 준비 상태입니다."), Material.STAINED_GLASS_PANE, 14, 1, tradeInventory, 26)
         setItem("§f[ §a거래 수락 §f]", listOf("§f상대방의 거래 수락 상태입니다."), Material.STAINED_GLASS_PANE, 14, 1, tradeInventory, 35)
 
-        setItem("§f[ §e1만원 추가 §f]", listOf("§f클릭시 1만원을 추가합니다.", "", "§e보내는 돈§f: 0원"), Material.GOLD_NUGGET, 0, 1, tradeInventory, 46)
-        setItem("§f[ §e10만원 추가 §f]", listOf("§f클릭시 10만원을 추가합니다.", "", "§e보내는 돈§f: 0원"), Material.GOLD_INGOT, 0, 1, tradeInventory, 47)
-        setItem("§f[ §e100만원 추가 §f]", listOf("§f클릭시 100만원을 추가합니다.", "", "§e보내는 돈§f: 0원"), Material.GOLD_BLOCK, 0, 1, tradeInventory, 48)
+        setItem("§f[ §e1만원 추가 §f]", listOf("§f클릭시 1만원을 추가합니다."), Material.GOLD_NUGGET, 0, 1, tradeInventory, 46)
+        setItem("§f[ §e10만원 추가 §f]", listOf("§f클릭시 10만원을 추가합니다."), Material.GOLD_INGOT, 0, 1, tradeInventory, 47)
+        setItem("§f[ §e100만원 추가 §f]", listOf("§f클릭시 100만원을 추가합니다."), Material.GOLD_BLOCK, 0, 1, tradeInventory, 48)
 
-        skull(self, tradeInventory, 2)
-        skull(target, tradeInventory, 6)
+        skull(self, listOf("§e보내는 돈§f: 0원"), tradeInventory, 2)
+        skull(target, listOf("§e보내는 돈§f: 0원"), tradeInventory, 6)
 
         return tradeInventory
+    }
+
+    fun refreshSendingMoney(money: Int, uuid: UUID, selfInventory: Inventory, partnerInventory: Inventory) {
+        val cleanMoney = DecimalFormat("#,###").format(money)
+        skull(getPlayer(uuid), listOf("§e보내는 돈§f: ${cleanMoney}원"), partnerInventory, 6)
+        skull(getPlayer(uuid), listOf("§e보내는 돈§f: ${cleanMoney}원"), selfInventory, 2)
+    }
+
+    fun isFirstReady(state: Boolean, selfInventory: Inventory, partnerInventory: Inventory) {
+        if (state) {
+            setItem("§f[ §6거래 준비 §f]", listOf("§f클릭 시 거래를 준비합니다."), Material.STAINED_GLASS_PANE, 13, 1, selfInventory, 18)
+            setItem("§f[ §6거래 준비 §f]", listOf("§f상대방의 거래 준비 상태입니다."), Material.STAINED_GLASS_PANE, 13, 1, partnerInventory, 26)
+            return
+        }
+        setItem("§f[ §6거래 준비 §f]", listOf("§f클릭 시 거래를 준비합니다."), Material.STAINED_GLASS_PANE, 14, 1, selfInventory, 18)
+        setItem("§f[ §6거래 준비 §f]", listOf("§f상대방의 거래 준비 상태입니다."), Material.STAINED_GLASS_PANE, 14, 1, partnerInventory, 25)
+    }
+
+    fun isSecondReady(state: Boolean, selfInventory: Inventory, partnerInventory: Inventory) {
+        if (state) {
+            setItem("§f[ §a거래 수락 §f]", listOf("§f클릭 시 거래를 수락합니다."), Material.STAINED_GLASS_PANE, 13, 1, selfInventory, 27)
+            setItem("§f[ §a거래 수락 §f]", listOf("§f클릭 시 거래를 수락합니다."), Material.STAINED_GLASS_PANE, 13, 1, partnerInventory, 35)
+            return
+        }
+        setItem("§f[ §a거래 수락 §f]", listOf("§f클릭 시 거래를 수락합니다."), Material.STAINED_GLASS_PANE, 14, 1, selfInventory, 27)
+        setItem("§f[ §a거래 수락 §f]", listOf("§f클릭 시 거래를 수락합니다."), Material.STAINED_GLASS_PANE, 14, 1, partnerInventory, 35)
     }
 
     private fun setItem(display: String, lore: List<String>, material: Material, data: Short, stack: Int, inventory: Inventory, vararg slot: Int) {
@@ -50,11 +79,12 @@ class InventoryManager {
         slot.forEach { inventory.setItem(it, item) }
     }
 
-    private fun skull(player: Player, inventory: Inventory, slot: Int) {
+    private fun skull(player: Player, lore: List<String>, inventory: Inventory, slot: Int) {
         val skull = ItemStack(Material.SKULL_ITEM, 1, SkullType.PLAYER.ordinal.toShort())
         val meta = skull.itemMeta as SkullMeta
         meta.owningPlayer = player
         meta.displayName = "§f§l" + player.name
+        meta.lore = lore
         skull.itemMeta = meta
         inventory.setItem(slot, skull)
     }
