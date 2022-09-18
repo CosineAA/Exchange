@@ -1,6 +1,6 @@
 package com.cosine.exchange.manager
 
-import com.cosine.exchange.service.InstanceService
+import com.cosine.exchange.main.Exchange
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
@@ -11,7 +11,7 @@ import java.util.*
  * self = 본인
  * target = 상대
  */
-class TradeManager(private val plugin: InstanceService, self: Player, target: Player) {
+class TradeManager(private val instance: Exchange, self: Player, target: Player) {
 
     companion object {
         /**
@@ -70,8 +70,8 @@ class TradeManager(private val plugin: InstanceService, self: Player, target: Pl
         traders[0] = self.uniqueId
         traders[1] = target.uniqueId
 
-        tradingInventories[0] = plugin.inventoryManager.createInventory(self, target)
-        tradingInventories[1] = plugin.inventoryManager.createInventory(target, self)
+        tradingInventories[0] = instance.inventoryManager.createInventory(self, target)
+        tradingInventories[1] = instance.inventoryManager.createInventory(target, self)
 
         activeTrades.add(this)
 
@@ -168,7 +168,7 @@ class TradeManager(private val plugin: InstanceService, self: Player, target: Pl
     private fun refreshFirstTradeState(boolean: Boolean, who: Int, who2: Int) {
         tradingInventories[who]?.let { selfInventory ->
             tradingInventories[who2]?.let { partnerInventory ->
-                plugin.inventoryManager.isFirstReady(boolean, selfInventory, partnerInventory)
+                instance.inventoryManager.isFirstReady(boolean, selfInventory, partnerInventory)
             }}
     }
 
@@ -191,7 +191,7 @@ class TradeManager(private val plugin: InstanceService, self: Player, target: Pl
     private fun refreshSecondTradeState(boolean: Boolean, who: Int, who2: Int) {
         tradingInventories[who]?.let { selfInventory ->
             tradingInventories[who2]?.let { partnerInventory ->
-                plugin.inventoryManager.isSecondReady(boolean, selfInventory, partnerInventory)
+                instance.inventoryManager.isSecondReady(boolean, selfInventory, partnerInventory)
             }}
     }
 
@@ -223,7 +223,7 @@ class TradeManager(private val plugin: InstanceService, self: Player, target: Pl
      */
     fun addSendingMoney(uuid: UUID, money: Int) {
         val doubleMoney = money.toDouble()
-        EconomyManager.depositPlayerMoney(uuid, doubleMoney)
+        instance.economyManager.depositPlayerMoney(uuid, doubleMoney)
         if (traders[0]?.equals(uuid) == true) {
             sendingMoney[0] += doubleMoney
             refreshSendingMoney(0, 1)
@@ -237,7 +237,7 @@ class TradeManager(private val plugin: InstanceService, self: Player, target: Pl
      */
     fun subtractSendingMoney(uuid: UUID, money: Int) {
         val doubleMoney = money.toDouble()
-        EconomyManager.withdrawPlayerMoney(uuid, doubleMoney)
+        instance.economyManager.withdrawPlayerMoney(uuid, doubleMoney)
         if (traders[0]?.equals(uuid) == true) {
             sendingMoney[0] -= doubleMoney
         } else {
@@ -252,7 +252,7 @@ class TradeManager(private val plugin: InstanceService, self: Player, target: Pl
         traders[who]?.let { self ->
             tradingInventories[who]?.let { selfInventory ->
                 tradingInventories[who2]?.let { partnerInventory ->
-                    plugin.inventoryManager.refreshSendingMoney(
+                    instance.inventoryManager.refreshSendingMoney(
                         sendingMoney[who].toInt(), self, selfInventory, partnerInventory)
                 }}}
     }

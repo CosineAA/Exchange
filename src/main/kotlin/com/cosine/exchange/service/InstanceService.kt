@@ -1,11 +1,14 @@
 package com.cosine.exchange.service
 
+import com.cosine.exchange.main.Exchange
 import com.cosine.exchange.manager.EconomyManager
 import com.cosine.exchange.manager.InventoryManager
 import com.cosine.exchange.manager.VariableManager
 import net.milkbowl.vault.economy.Economy
 
 interface InstanceService {
+
+    val plugin: Exchange
 
     val economy: Economy
     val variableManager: VariableManager
