@@ -21,7 +21,6 @@ class Exchange : JavaPlugin(), InstanceService {
     override val variableManager: VariableManager by lazy { VariableManager() }
     override val inventoryManager: InventoryManager by lazy { InventoryManager() }
     override val economyManager: EconomyManager by lazy { EconomyManager(this) }
-    override val plugin: Exchange by lazy { this }
 
     override fun onEnable() {
         logger.info("거래 플러그인 활성화")
@@ -41,12 +40,8 @@ class Exchange : JavaPlugin(), InstanceService {
     }
 
     private fun setupEconomy(): Boolean {
-        if (server.pluginManager.getPlugin("Vault") == null) {
-            return false
-        }
-        val rsp = server.servicesManager.getRegistration(
-            Economy::class.java
-        ) ?: return false
+        server.pluginManager.getPlugin("Vault") ?: return false
+        val rsp = server.servicesManager.getRegistration(Economy::class.java) ?: return false
         econ = rsp.provider
         return true
     }
