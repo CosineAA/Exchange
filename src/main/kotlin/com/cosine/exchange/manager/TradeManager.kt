@@ -2,6 +2,7 @@ package com.cosine.exchange.manager
 
 import com.cosine.exchange.main.Exchange
 import com.cosine.exchange.main.Exchange.Companion.prefix
+import com.cosine.exchange.service.InstanceService
 import com.cosine.exchange.util.getPlayer
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -13,7 +14,7 @@ import java.util.*
  * self = 본인
  * target = 상대
  */
-class TradeManager(private val instance: Exchange, self: Player, target: Player) {
+class TradeManager(private val instance: InstanceService, self: Player, target: Player) {
 
     companion object {
         /**
@@ -139,6 +140,9 @@ class TradeManager(private val instance: Exchange, self: Player, target: Player)
 
         instance.economyManager.depositPlayerMoney(self, getSendingMoney(partner))
         instance.economyManager.depositPlayerMoney(partner, getSendingMoney(self))
+
+        instance.variableManager.deleteExchange(self)
+        instance.variableManager.deleteExchange(partner)
 
         activeTrades.remove(this)
     }

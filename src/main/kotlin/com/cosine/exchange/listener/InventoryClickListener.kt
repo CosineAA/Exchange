@@ -3,6 +3,7 @@ package com.cosine.exchange.listener
 import com.cosine.exchange.main.Exchange
 import com.cosine.exchange.main.Exchange.Companion.prefix
 import com.cosine.exchange.manager.TradeManager
+import com.cosine.exchange.service.InstanceService
 import com.cosine.exchange.util.getPlayer
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -11,7 +12,7 @@ import org.bukkit.event.inventory.ClickType
 import org.bukkit.event.inventory.InventoryClickEvent
 import java.util.UUID
 
-class InventoryClickListener(private val instance: Exchange) : Listener {
+class InventoryClickListener(private val instance: InstanceService) : Listener {
 
     @EventHandler
     fun onInventoryClick(event: InventoryClickEvent) {

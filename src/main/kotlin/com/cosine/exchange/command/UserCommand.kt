@@ -12,7 +12,7 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.scheduler.BukkitRunnable
 
-class UserCommand(private val instance: Exchange) : CommandExecutor, ExchangeService {
+class UserCommand(private val instance: InstanceService) : CommandExecutor, ExchangeService {
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (sender is Player) {
