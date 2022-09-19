@@ -171,7 +171,7 @@ class TradeManager(private val instance: Exchange, self: Player, target: Player)
     /**
      * 거래 물품을 반환합니다.
      */
-    fun getTradingItem(inventory: Inventory): List<ItemStack> {
+    private fun getTradingItem(inventory: Inventory): List<ItemStack> {
         val list = mutableListOf<ItemStack>()
         var line = 1
         for (loop: Int in 0..2) {
@@ -198,7 +198,7 @@ class TradeManager(private val instance: Exchange, self: Player, target: Player)
     /**
      * 거래하는 상대 플레이어의 인벤토리를 반환합니다.
      */
-    fun getInventoryOfPartner(uuid: UUID): Inventory {
+    private fun getInventoryOfPartner(uuid: UUID): Inventory {
         return if (traders[0]!! == uuid) {
             tradingInventories[1]!!
         } else {
