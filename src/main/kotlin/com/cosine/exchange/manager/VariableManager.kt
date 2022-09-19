@@ -14,6 +14,14 @@ class VariableManager : VariableService {
         Variable.traders[self] = target
     }
 
+    override fun setAccept(self: UUID) {
+        Variable.acceptOrRefuse[self] = 2
+    }
+
+    override fun setRefuse(self: UUID) {
+        Variable.acceptOrRefuse[self] = 1
+    }
+
     override fun isAccepted(self: UUID): Boolean {
         return Variable.acceptOrRefuse[self] == 2
     }

@@ -2,6 +2,7 @@ package com.cosine.exchange.main
 
 import com.cosine.exchange.command.UserCommand
 import com.cosine.exchange.listener.InventoryClickListener
+import com.cosine.exchange.listener.InventoryCloseListener
 import com.cosine.exchange.manager.EconomyManager
 import com.cosine.exchange.service.InstanceService
 import com.cosine.exchange.manager.InventoryManager
@@ -33,6 +34,7 @@ class Exchange : JavaPlugin(), InstanceService {
 
         getCommand("거래").executor = UserCommand(this)
         server.pluginManager.registerEvents(InventoryClickListener(this), this)
+        server.pluginManager.registerEvents(InventoryCloseListener(this), this)
     }
 
     override fun onDisable() {

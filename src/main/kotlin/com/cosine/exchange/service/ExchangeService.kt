@@ -6,7 +6,7 @@ interface ExchangeService {
 
     fun beginExchange(self: Player, target: Player)
 
-    fun acceptExchange()
+    fun acceptExchange(self: Player)
 
-    fun refuseExchange()
+    fun refuseExchange(self: Player)
 }

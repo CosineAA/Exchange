@@ -22,8 +22,8 @@ class InventoryClickListener(private val instance: Exchange) : Listener {
         trade.synchronizationInventory(uuid) // 인벤토리 동기화
         if (inventory == player.openInventory.topInventory) {
             if (trade.getClickAllowedSlot(uuid).contains(event.rawSlot)) {
-                if (event.rawSlot == 18) checkClearFirstReady(uuid, trade)
-                if (event.rawSlot == 27) checkClearSecondReady(uuid, trade)
+                if (event.rawSlot == 18) setFirstReadyState(uuid, trade)
+                if (event.rawSlot == 27) setSecondReadyState(uuid, trade)
                 if (event.rawSlot == 46) setSendingMoney(uuid, 10000, trade, event)
                 if (event.rawSlot == 47) setSendingMoney(uuid, 100000, trade, event)
                 if (event.rawSlot == 48) setSendingMoney(uuid, 1000000, trade, event)
@@ -46,19 +46,29 @@ class InventoryClickListener(private val instance: Exchange) : Listener {
             trade.subtractSendingMoney(uuid, money)
         }
     }
-    private fun checkClearFirstReady(uuid: UUID, trade: TradeManager) {
-        if (!trade.getFirstReady(uuid)) {
-            trade.setFirstReady(uuid, true) // 1차 준비 완료
+    private fun setFirstReadyState(self: UUID, trade: TradeManager) {
+        if (!trade.getFirstReady(self)) {
+            trade.setFirstReady(self, true) // 1차 준비 완료
             return
         }
-        trade.setFirstReady(uuid, false) // 1차 준비 해제
-        trade.setSecondReady(uuid, false) // 2차 준비 해제
+        trade.setFirstReady(self, false) // 본인 1차 준비 해제
+        trade.setSecondReady(self, false) // 본인 2차 준비 해제
     }
-    private fun checkClearSecondReady(uuid: UUID, trade: TradeManager) {
-        if (!trade.getFirstReady(uuid)) {
-            getPlayer(uuid).sendMessage("$prefix 아직 1차 준비를 하지 않았습니다.")
+    private fun setSecondReadyState(self: UUID, trade: TradeManager) {
+        if (!trade.getFirstReady(self)) {
+            getPlayer(self).sendMessage("$prefix 아직 1차 준비를 하지 않았습니다.")
             return
         }
-        trade.setSecondReady(uuid, false)
+        val partner = trade.getTradingPartner(self)
+        if (trade.getFirstReady(partner)) {
+            getPlayer(self).sendMessage("$prefix 상대가 아직 1차 준비를 하지 않았습니다.")
+            return
+        }
+        trade.setSecondReady(self, false)
+        isPartnerSecondReady(self, partner, trade)
+    }
+    private fun isPartnerSecondReady(self: UUID, partner: UUID, trade: TradeManager) {
+        if (trade.getSecondReady(partner)) return
+        trade.successExchange(self)
     }
 }

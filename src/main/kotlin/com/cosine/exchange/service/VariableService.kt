@@ -8,6 +8,10 @@ interface VariableService {
 
     fun addTrader(self: UUID, target: UUID)
 
+    fun setAccept(self: UUID)
+
+    fun setRefuse(self: UUID)
+
     fun isAccepted(self: UUID): Boolean
 
     fun deleteExchange(self: UUID)

@@ -42,6 +42,8 @@ class UserCommand(private val instance: Exchange) : CommandExecutor, ExchangeSer
                     }
                     beginExchange(player, target)
                 }
+                "수락" -> acceptExchange(player)
+                "거절" -> refuseExchange(player)
             }
         }
         return false
@@ -67,7 +69,7 @@ class UserCommand(private val instance: Exchange) : CommandExecutor, ExchangeSer
                 time--
                 if (time == 0) {
                     cancel()
-                    refuseExchange(self, target)
+                    refuseMessage(self, target)
                     return
                 }
                 if (instance.variableManager.isAccepted(target.uniqueId)) {
@@ -75,13 +77,13 @@ class UserCommand(private val instance: Exchange) : CommandExecutor, ExchangeSer
                     TradeManager(instance, self, target)
                 } else {
                     cancel()
-                    refuseExchange(self, target)
+                    refuseMessage(self, target)
                 }
             }
-        }.runTaskTimerAsynchronously(instance.plugin, 0, 20)
+        }.runTaskTimerAsynchronously(instance, 0, 20)
     }
 
-    private fun refuseExchange(self: Player, target: Player) {
+    private fun refuseMessage(self: Player, target: Player) {
         instance.variableManager.apply {
             deleteExchange(self.uniqueId)
             deleteExchange(target.uniqueId)
@@ -90,11 +92,19 @@ class UserCommand(private val instance: Exchange) : CommandExecutor, ExchangeSer
         target.sendMessage("$prefix 거래를 거절하였습니다.")
     }
 
-    override fun acceptExchange() {
-        TODO("Not yet implemented")
+    override fun acceptExchange(self: Player) {
+        if (!instance.variableManager.hasTrader(self.uniqueId)) {
+            self.sendMessage("$prefix 거래 신청이 오지 않았습니다.")
+            return
+        }
+        instance.variableManager.setAccept(self.uniqueId)
     }
 
-    override fun refuseExchange() {
-        TODO("Not yet implemented")
+    override fun refuseExchange(self: Player) {
+        if (!instance.variableManager.hasTrader(self.uniqueId)) {
+            self.sendMessage("$prefix 거래 신청이 오지 않았습니다.")
+            return
+        }
+        instance.variableManager.setRefuse(self.uniqueId)
     }
 }

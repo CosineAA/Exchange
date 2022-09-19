@@ -1,6 +1,8 @@
 package com.cosine.exchange.manager
 
 import com.cosine.exchange.main.Exchange
+import com.cosine.exchange.main.Exchange.Companion.prefix
+import com.cosine.exchange.util.getPlayer
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
@@ -93,37 +95,114 @@ class TradeManager(private val instance: Exchange, self: Player, target: Player)
      * 상대 거래 물품을 본인 인벤토리에 동기화합니다.
      */
     fun synchronizationInventory(uuid: UUID) {
-        if (traders[0] == uuid) {
-            setItemFunction(uuid, tradingInventories[0])
+        if (traders[0]!! == uuid) {
+            setItemFunction(uuid, tradingInventories[0]!!)
         } else {
-            setItemFunction(uuid, tradingInventories[1])
+            setItemFunction(uuid, tradingInventories[1]!!)
         }
     }
 
     /**
      * 물품 동기화 이벤트의 공통 구문입니다.
      */
-    private fun setItemFunction(uuid: UUID, inventory: Inventory?) {
+    private fun setItemFunction(uuid: UUID, inventory: Inventory) {
         val partnerInventory = getInventoryOfPartner(uuid)
         var line = 1
         for (loop: Int in 0..2) {
             if (line == 5) break
             val units = (5 + loop)
             val slot = (9 * line) + units
-            val partnerItem = partnerInventory?.getItem(slot) ?: glass
-            inventory?.setItem(slot - 4, partnerItem)
+            val partnerItem = partnerInventory.getItem(slot) ?: glass
+            inventory.setItem(slot - 4, partnerItem)
             if (units == 7) line++
+        }
+    }
+
+    /**
+     * 거래 물품과 돈을 보냅니다.
+     */
+    fun successExchange(self: UUID) {
+        val partner = getTradingPartner(self)
+        val selfInventory = getPlayer(self).openInventory.topInventory
+        val partnerInventory = getInventoryOfPartner(self)
+
+        getPlayer(self).apply {
+            sendMessage("$prefix 거래가 완료되었습니다.")
+            closeInventory()
+            getTradingItem(partnerInventory).forEach { inventory.addItem(it) }
+        }
+        getPlayer(partner).apply {
+            sendMessage("$prefix 거래가 완료되었습니다.")
+            closeInventory()
+            getTradingItem(selfInventory).forEach { inventory.addItem(it) }
+        }
+
+        instance.economyManager.depositPlayerMoney(self, getSendingMoney(partner))
+        instance.economyManager.depositPlayerMoney(partner, getSendingMoney(self))
+
+        activeTrades.remove(this)
+    }
+
+    /**
+     * 거래를 취소합니다.
+     */
+    fun cancelExchange(self: UUID) {
+        val partner = getTradingPartner(self)
+        val selfInventory = getPlayer(self).openInventory.topInventory
+        val partnerInventory = getInventoryOfPartner(self)
+
+        getPlayer(self).apply {
+            sendMessage("$prefix 거래가 취소되었습니다.")
+            closeInventory()
+            getTradingItem(selfInventory).forEach { inventory.addItem(it) }
+        }
+        getPlayer(partner).apply {
+            sendMessage("$prefix 거래가 취소되었습니다.")
+            closeInventory()
+            getTradingItem(partnerInventory).forEach { inventory.addItem(it) }
+        }
+
+        instance.economyManager.withdrawPlayerMoney(self, getSendingMoney(self))
+        instance.economyManager.withdrawPlayerMoney(partner, getSendingMoney(partner))
+
+        activeTrades.remove(this)
+    }
+
+    /**
+     * 거래 물품을 반환합니다.
+     */
+    fun getTradingItem(inventory: Inventory): List<ItemStack> {
+        val list = mutableListOf<ItemStack>()
+        var line = 1
+        for (loop: Int in 0..2) {
+            if (line == 5) break
+            val units = (5 + loop)
+            val slot = (9 * line) + units
+            list.add(inventory.getItem(slot - 4))
+            if (units == 7) line++
+        }
+        return list
+    }
+
+    /**
+     * 거래하는 상대를 반환합니다.
+     */
+    fun getTradingPartner(uuid: UUID): UUID {
+        return if (traders[0]!! == uuid) {
+            traders[1]!!
+        } else {
+            traders[0]!!
         }
     }
 
     /**
      * 거래하는 상대 플레이어의 인벤토리를 반환합니다.
      */
-    fun getInventoryOfPartner(uuid: UUID): Inventory? {
-        return if (traders[0]?.equals(uuid) == true) {
-            tradingInventories[1]
+    fun getInventoryOfPartner(uuid: UUID): Inventory {
+        return if (traders[0]!! == uuid) {
+            tradingInventories[1]!!
         } else {
-            tradingInventories[0]
+            tradingInventories[0]!!
         }
     }
 
@@ -131,7 +210,7 @@ class TradeManager(private val instance: Exchange, self: Player, target: Player)
      * 플레이어의 1번째 거래 상태를 반환합니다.
      */
     fun getFirstReady(uuid: UUID): Boolean {
-        return if (traders[0]?.equals(uuid) == true) {
+        return if (traders[0]!! == uuid) {
             isFirstReady[0]
         } else {
             isFirstReady[1]
@@ -142,7 +221,7 @@ class TradeManager(private val instance: Exchange, self: Player, target: Player)
      * 플레이어의 2번째 거래 상태를 반환합니다.
      */
     fun getSecondReady(uuid: UUID): Boolean {
-        return if (traders[0]?.equals(uuid) == true) {
+        return if (traders[0]!! == uuid) {
             isSecondReady[0]
         } else {
             isSecondReady[1]
@@ -153,7 +232,7 @@ class TradeManager(private val instance: Exchange, self: Player, target: Player)
      * 플레이어의 1번째 거래 상태를 설정합니다.
      */
     fun setFirstReady(uuid: UUID, boolean: Boolean) {
-        if (traders[0]?.equals(uuid) == true) {
+        if (traders[0]!! == uuid) {
             isFirstReady[0] = boolean
             refreshFirstTradeState(boolean, 0, 1)
         } else {
