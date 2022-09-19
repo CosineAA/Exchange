@@ -34,7 +34,7 @@ class Exchange : JavaPlugin(), InstanceService {
 
         getCommand("거래").executor = UserCommand(this)
         server.pluginManager.registerEvents(InventoryClickListener(this), this)
-        server.pluginManager.registerEvents(InventoryCloseListener(this), this)
+        server.pluginManager.registerEvents(InventoryCloseListener(), this)
     }
 
     override fun onDisable() {

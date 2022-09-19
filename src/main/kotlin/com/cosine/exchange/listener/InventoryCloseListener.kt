@@ -1,13 +1,12 @@
 package com.cosine.exchange.listener
 
-import com.cosine.exchange.main.Exchange
 import com.cosine.exchange.manager.TradeManager
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryCloseEvent
 
-class InventoryCloseListener(private val instance: Exchange) : Listener {
+class InventoryCloseListener() : Listener {
 
     @EventHandler
     fun onInventoryClose(event: InventoryCloseEvent) {
