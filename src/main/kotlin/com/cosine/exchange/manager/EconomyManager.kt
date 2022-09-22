@@ -1,6 +1,5 @@
 package com.cosine.exchange.manager
 
-import com.cosine.exchange.main.Exchange
 import com.cosine.exchange.service.EconomyService
 import com.cosine.exchange.service.InstanceService
 import org.bukkit.Bukkit

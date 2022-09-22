@@ -1,6 +1,6 @@
 name: Exchange
 version: '${version}'
-main: com.cosine.exchange.main.Exchange
+main: com.cosine.exchange.Exchange
 authors: [ Cosine_A ]
 description: 거래 플러그인
 

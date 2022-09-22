@@ -1,7 +1,6 @@
 package com.cosine.exchange.listener
 
-import com.cosine.exchange.main.Exchange
-import com.cosine.exchange.main.Exchange.Companion.prefix
+import com.cosine.exchange.Exchange.Companion.prefix
 import com.cosine.exchange.manager.TradeManager
 import com.cosine.exchange.service.InstanceService
 import com.cosine.exchange.util.getPlayer

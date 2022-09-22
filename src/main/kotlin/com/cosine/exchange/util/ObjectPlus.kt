@@ -1,6 +1,5 @@
 package com.cosine.exchange.util
 
-import com.cosine.exchange.main.Exchange
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.util.UUID

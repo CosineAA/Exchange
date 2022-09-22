@@ -1,7 +1,7 @@
 package com.cosine.exchange.command
 
-import com.cosine.exchange.main.Exchange
-import com.cosine.exchange.main.Exchange.Companion.prefix
+import com.cosine.exchange.Exchange
+import com.cosine.exchange.Exchange.Companion.prefix
 import com.cosine.exchange.manager.TradeManager
 import com.cosine.exchange.service.ExchangeService
 import com.cosine.exchange.service.InstanceService

@@ -1,4 +1,4 @@
-package com.cosine.exchange.main
+package com.cosine.exchange
 
 import com.cosine.exchange.command.UserCommand
 import com.cosine.exchange.listener.InventoryClickListener
