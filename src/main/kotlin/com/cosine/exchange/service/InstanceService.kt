@@ -8,8 +8,11 @@ import net.milkbowl.vault.economy.Economy
 interface InstanceService {
 
     val economy: Economy
+
     val variableManager: VariableManager
+
     val inventoryManager: InventoryManager
+
     val economyManager: EconomyManager
 }
 

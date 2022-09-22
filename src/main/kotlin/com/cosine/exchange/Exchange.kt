@@ -16,21 +16,21 @@ class Exchange : JavaPlugin(), InstanceService {
         const val prefix = "§f§l[ §6§l거래 §f§l]§f"
     }
 
-    private var econ: Economy? = null
-
-    override val economy: Economy get() = econ ?: throw java.lang.Exception("이코노미가 없습니다.")
-    override val variableManager: VariableManager by lazy { VariableManager() }
-    override val inventoryManager: InventoryManager by lazy { InventoryManager() }
-    override val economyManager: EconomyManager by lazy { EconomyManager(this) }
+    override lateinit var economy: Economy
+    override lateinit var variableManager: VariableManager
+    override lateinit var inventoryManager: InventoryManager
+    override lateinit var economyManager: EconomyManager
 
     override fun onEnable() {
         logger.info("거래 플러그인 활성화")
 
         if (!setupEconomy()) {
-            logger.info("Vault 플러그인이 없어서 플러그인이 비활성화되었습니다.")
-            server.pluginManager.disablePlugin(this)
-            return
+            logger.info("Vault 플러그인이 없으면 플러그인이 작동하지 않습니다.")
         }
+
+        variableManager = VariableManager()
+        inventoryManager = InventoryManager()
+        economyManager = EconomyManager(this)
 
         getCommand("거래").executor = UserCommand(this)
         server.pluginManager.registerEvents(InventoryClickListener(this), this)
@@ -44,7 +44,7 @@ class Exchange : JavaPlugin(), InstanceService {
     private fun setupEconomy(): Boolean {
         server.pluginManager.getPlugin("Vault") ?: return false
         val rsp = server.servicesManager.getRegistration(Economy::class.java) ?: return false
-        econ = rsp.provider
+        economy = rsp.provider
         return true
     }
 }
